@@ -1,4 +1,5 @@
 import pdb
+from workbench.approval import authorize_action
 
 import pyperclip
 from typing import Optional, Type, Callable, Dict, Any, Union, Awaitable, TypeVar
@@ -123,6 +124,11 @@ class CustomController(Controller):
         try:
             for action_name, params in action.model_dump(exclude_unset=True).items():
                 if params is not None:
+                    approved = await authorize_action(
+                        action_name, params, self.ask_assistant_callback, browser_context
+                    )
+                    if not approved:
+                        return ActionResult(error="Human approval denied or unavailable", include_in_memory=True)
                     if action_name.startswith("mcp"):
                         # this is a mcp tool
                         logger.debug(f"Invoke MCP tool: {action_name}")

@@ -1,0 +1,42 @@
+name: Approval workbench
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.12.23'
+          python-version: '3.12'
+      - run: uv sync --locked
+      - run: uv run ruff check workbench tests-workbench examples
+      - run: uv run ruff format --check workbench tests-workbench examples
+      - run: uv run pytest tests-workbench -q
+      - run: uv run python -m py_compile src/controller/custom_controller.py
+      - run: uv run playwright install --with-deps chromium
+      - run: uv run python examples/browser_smoke.py
+      - run: uv run pip-audit
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-workbench-evidence
+          path: test-results/
+  legacy-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.12.23'
+          python-version: '3.12'
+      - run: uv pip compile requirements.txt -o legacy-resolved.txt
+      # Deliberately blocking: inherited dependencies must be remediated before release.
+      - run: uvx pip-audit -r legacy-resolved.txt --no-deps --disable-pip
