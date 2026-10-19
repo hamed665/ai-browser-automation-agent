@@ -12,6 +12,16 @@ A Python 3.12 resolution of the legacy requirements completed. A previous pip-au
 Python 3.12.14; uv 0.12.23. New environment isolated with uv.lock.
 Local pytest: **9 passed**, including execution of the real controller method body with SDK-boundary doubles. Python compilation of the modified upstream controller passed. Starlette currently emits a TestClient/httpx deprecation warning; no test fails because of it.
 
-The local Chromium download returned a truncated archive in this environment. Therefore local real-browser verification is blocked; the independent GitHub runner installs Chromium and executes the smoke scenario. Do not infer that it passed until its actual Actions result is checked. Screenshot artifacts come from real execution, never generated mockups.
+The local Chromium download returned a truncated archive in this environment. Therefore local real-browser verification is blocked; the independent GitHub runner installs Chromium and executes the smoke scenario. GitHub Actions run 39302399459 was inspected: the verify job passed all nine tests, Ruff, controller compilation, the real Chromium/API flow, responsive screenshots and the isolated dependency audit. The independent legacy-security job failed with 119 advisory entries in 15 packages, as expected; the overall workflow is not green. Screenshot artifacts come from real execution, never generated mockups.
 
 No LLM/provider credentials, production browser profile, customer records or Smart Visions infrastructure were accessed. The controlled fixture is synthetic. No public deployment, real external-site task, arbitrary browsing benchmark, multi-user security audit or full legacy SDK/model integration has been verified.
+
+## Real screenshot evidence
+
+Captured by the real browser smoke in CI, not generated illustrations:
+
+- [Desktop dashboard](screenshots/workbench-1440.png)
+- [Mobile dashboard](screenshots/workbench-320.png)
+- [Controlled fixture capture](screenshots/controlled-browser.png)
+
+The dependency license metadata inventory is [dependency-licenses.json](dependency-licenses.json). New environment metadata reports MIT, BSD, Apache-2.0, PSF and MPL-2.0 families; certifi uses MPL-2.0. Preserve their notices and any source-file obligations when distributing modified dependencies. This metadata inventory is not a legal opinion or a completed legacy-stack license review.

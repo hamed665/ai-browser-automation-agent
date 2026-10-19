@@ -73,4 +73,6 @@ Derived from [browser-use/web-ui](https://github.com/browser-use/web-ui), commit
 
 My additions are `workbench/`, `tests-workbench/`, `examples/browser_smoke.py`, the new environment/lock/configuration, verification documentation and CI workflow. The original controller has an explicit pre-dispatch approval hook. Original browser-use/Gradio/model integrations are upstream work. No claim is made to original authorship of that foundation.
 
+![Real dashboard screenshot captured by CI](docs/screenshots/workbench-1440.png)
+
 The upstream MIT license permits derivatives subject to retention of its notice. Dependencies have separate licenses; the legacy dependency inventory and commercial provider/model terms require separate review before distribution or hosted use. This demo makes no provider calls.
