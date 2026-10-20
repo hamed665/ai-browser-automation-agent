@@ -89,6 +89,9 @@ def create_app(directory=None, runner=run_task, origin=None):
                 async with semaphore:
                     result = await asyncio.wait_for(runner(task, directory, origin), timeout=20)
                 store.transition(task_id, "running", "succeeded", result)
+            except asyncio.CancelledError:
+                store.transition(task_id, "running", "failed", {"error": "ExecutionCancelled"})
+                raise
             except Exception as error:  # noqa: BLE001 - record a terminal task state
                 store.transition(task_id, "running", "failed", {"error": type(error).__name__})
         return find(task_id)

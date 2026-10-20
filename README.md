@@ -48,7 +48,7 @@ Open `http://127.0.0.1:3188`, enter the dedicated local token, create a screensh
 
 ## Security
 
-Keep this service on loopback. The bearer token fails closed when missing or shorter than 16 characters, is not saved by the dashboard, and is required for task data and screenshots. The fixture and empty dashboard shell are public locally. SQLite uses restricted file permissions. This is a single-operator tool without tenant isolation, user accounts, durable worker recovery, storage quotas or a hardened public deployment boundary. A process crash can leave a task marked running; do not reuse its old approval.
+Keep this service on loopback. The bearer token fails closed when missing or shorter than 16 characters, is not saved by the dashboard, and is required for task data and screenshots. The fixture and empty dashboard shell are public locally. SQLite uses restricted file permissions. This is a single-operator tool without tenant isolation, user accounts, durable worker recovery, storage quotas or a hardened public deployment boundary. Cancelled requests record a terminal failure and consume their approval; a process crash can still leave a task marked running; do not reuse its old approval.
 
 The controller confirmation is a guardrail, not a browser sandbox. Its challenge hides common secret fields and URL credentials/query strings; this heuristic is not a general personal-data detector. Do not provide sensitive inputs. Every browser/MCP action except `done` and `ask_for_assistant` requires confirmation, including reading/navigation actions. That conservative policy trades convenience for explicit control.
 
@@ -65,7 +65,7 @@ uv run python examples/browser_smoke.py
 uv run pip-audit
 ```
 
-Nine focused tests cover callback confirmation/replay/redaction, the actual controller dispatch gate, atomic transitions, API authentication/validation, rejection, single-use execution, sanitized failures and loopback restrictions. The smoke scenario starts a disposable local server, executes real Chromium, checks the screenshot PNG and records dashboard screenshots at 320/1440 pixels. GitHub Actions uploads that evidence. See [verification](docs/VERIFICATION.md) for the measured baseline and limits.
+Ten focused tests cover callback confirmation/replay/redaction, the actual controller dispatch gate, atomic transitions, API authentication/validation, rejection, single-use execution, sanitized failures, cancellation/replay rejection and loopback restrictions. The smoke scenario starts a disposable local server, executes real Chromium, checks the screenshot PNG and records dashboard screenshots at 320/1440 pixels. GitHub Actions uploads that evidence. See [verification](docs/VERIFICATION.md) for the measured baseline and limits.
 
 ## Attribution
 

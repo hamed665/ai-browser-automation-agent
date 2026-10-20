@@ -158,3 +158,45 @@ def test_actual_controller_dispatch_gate():
     controller.ask_assistant_callback = confirm
     assert asyncio.run(scope["act"](controller, action)).extracted_content == "ok"
     assert len(calls) == 1
+
+
+def test_cancelled_execution_is_terminal_and_cannot_reuse_approval(tmp_path, monkeypatch):
+    import httpx
+
+    monkeypatch.setenv("WORKBENCH_API_TOKEN", "synthetic-test-token-123")
+
+    async def scenario():
+        started = asyncio.Event()
+        blocked = asyncio.Event()
+
+        async def interrupted_runner(*args):
+            started.set()
+            await blocked.wait()
+            return {"title": "Must not complete"}
+
+        app = create_app(tmp_path, interrupted_runner)
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            task = (
+                await client.post("/api/tasks", headers=HEADERS, json={"action": "inspect"})
+            ).json()
+            path = "/api/tasks/" + task["id"]
+            assert (await client.post(path + "/approve", headers=HEADERS)).status_code == 200
+            execution = asyncio.create_task(client.post(path + "/run", headers=HEADERS))
+            await asyncio.wait_for(started.wait(), timeout=2)
+            execution.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await execution
+            result = (await client.get(path, headers=HEADERS)).json()
+            assert result["state"] == "failed"
+            assert result["result"] == {"error": "ExecutionCancelled"}
+            assert [event["state"] for event in result["events"]] == [
+                "pending",
+                "approved",
+                "running",
+                "failed",
+            ]
+            assert (await client.post(path + "/run", headers=HEADERS)).status_code == 409
+            assert (await client.post(path + "/approve", headers=HEADERS)).status_code == 409
+
+    asyncio.run(scenario())
