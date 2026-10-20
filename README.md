@@ -1,6 +1,12 @@
 # Browser Automation Workbench
 
-A portfolio engineering project by [Hamed](https://github.com/hamed665): review browser tasks, approve execution, inspect audit history, and capture screenshots in a controlled demo.
+**[Hamed Minaei](https://github.com/hamed665) · Project maintainer & integration engineer**
+
+**My engineering scope:** Single-use approvals, execution logs, protected screenshots, upstream controller confirmation and cancellation/replay handling.
+
+[My contributions & implementation evidence](MY_CONTRIBUTIONS.md) · [Implementation PR](https://github.com/hamed665/ai-browser-automation-agent/pull/1) · [Architecture](#architecture) · [Testing](#testing)
+
+A portfolio engineering project by [Hamed Minaei](https://github.com/hamed665): review browser tasks, approve execution, inspect audit history, and capture screenshots in a controlled demo.
 
 **Status: local portfolio preview.** The new workbench is isolated from the inherited Gradio application's dependencies. The original LLM application remains a security-blocked legacy integration. This repository is not production-ready and has no hosted live demo.
 
