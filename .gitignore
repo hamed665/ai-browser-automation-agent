@@ -190,3 +190,7 @@ data/
 *.pdf
 
 workflow
+# Local synthetic workbench state and evidence
+.data/
+.venv/
+test-results/

@@ -1,0 +1,14 @@
+[project]
+name = "ai-browser-automation-workbench"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["fastapi>=0.135", "uvicorn>=0.42", "playwright>=1.58"]
+
+[dependency-groups]
+dev = ["pytest>=9", "httpx>=0.28", "ruff>=0.15", "pip-audit>=2.10"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
