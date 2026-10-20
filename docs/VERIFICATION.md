@@ -25,3 +25,9 @@ Captured by the real browser smoke in CI, not generated illustrations:
 - [Controlled fixture capture](screenshots/controlled-browser.png)
 
 The dependency license metadata inventory is [dependency-licenses.json](dependency-licenses.json). New environment metadata reports MIT, BSD, Apache-2.0, PSF and MPL-2.0 families; certifi uses MPL-2.0. Preserve their notices and any source-file obligations when distributing modified dependencies. This metadata inventory is not a legal opinion or a completed legacy-stack license review.
+
+## Patch-only remediation feasibility — 2026-10-20
+
+A fresh Python 3.12 dependency resolution was attempted with the inherited requirements unchanged and a `pillow>=12.3.0` security constraint (the patch floor reported in the inspected legacy audit). The resolver rejected the graph: Gradio 5.27.0 requires `pillow>=8.0,<12.0`. Therefore that Pillow patch cannot be applied while retaining the inherited Gradio pin. No version was forced, no package-audit exception was added and no lockfile was presented as resolved.
+
+Reproduction: create a constraint file containing `pillow>=12.3.0`, then run `uv pip compile --python-version 3.12 -c <constraint-file> requirements.txt`. The observed result was `No solution found ... gradio==5.27.0 depends on pillow>=8.0,<12.0 ... requirements are unsatisfiable`. A full Gradio/browser-use/LangChain migration requires compatible UI/controller/provider verification; changing only the version strings would not establish that. The isolated workbench and controlled fixture runner remain independently testable, while the full legacy agent remains a draft release with its blocking audit intact.
